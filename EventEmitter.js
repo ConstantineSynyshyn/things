@@ -16,3 +16,16 @@ class EventEmitter {
     event?.forEach((fn) => fn.call(null, data));
   }
 }
+
+const memoize = (fn) =>
+  new Proxy(fn, {
+    cache: new Map(),
+    apply: (target, thisArg, argArray) => {
+      let cacheKey = argArray.toString();
+      if (!this.cache.has(cacheKey)) {
+        const result = target.apply(thisArg, argArray);
+        return this.cache.set(cacheKey, result);
+      }
+      return this.cache.get(cacheKey);
+    },
+  });
